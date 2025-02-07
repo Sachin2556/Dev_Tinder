@@ -2,23 +2,23 @@ const express= require("express");
 const connectDB = require("./config/database");
 const app=express();
 const User = require("./models/user");
+const {validateSignupData} = require("./utils/validation");
 
 // read the data request which comes direct from body of postman api
 app.use(express.json());   // express.json used as a middleware (which run for all routes)
 
 app.post("/signup",async (req,res) =>{
-    // create a request dynamic (direct body se data aa jayee)
-    const user1= new User( req.body );
-   
-    
 
-    // Creating a new instance of the User model
-    const user =new User({
-        firstname: "Hritik",
-        lastname : "roshan",
-        emailId : "ritikroshan1234@gmail.com",
-        password: "king@123"
-    });
+    // create a request dynamic (direct body se data aa jayee)
+    // const user1= new User( req.body );
+   
+    // // Creating a new instance of the User model
+    // const user =new User({
+    //     firstname: "Hritik",
+    //     lastname : "roshan",
+    //     emailId : "ritikroshan1234@gmail.com",
+    //     password: "king@123"
+    // });
    try{
     await user1.save();
     // await user.save();

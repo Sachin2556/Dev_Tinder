@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator")  //read validator from documents (search validator library)
 
 const userSchema = mongoose.Schema({
 
@@ -23,12 +24,20 @@ const userSchema = mongoose.Schema({
         unique : true,
         lowercase : true, // automatic all keywords insert in lowercase in emaild in database
         trim : true,       // trim blank spaces("    rajsachin805130@gmail.com     ")
+        validate(value){
+            if(!validator.isEmail(value)){
+                 throw new Error("Invalid email address :" + value);
+            }
+         },
        },
 
        password: {
           type: String,
-          minLength : 6,
-          maxLength : 10,
+          validate(value){
+            if(!validator.isStrongPassword(value)){
+                 throw new Error("Enter a Strong Password :" + value);
+            }
+         },
        },
 
        age : {
@@ -48,6 +57,11 @@ const userSchema = mongoose.Schema({
 
        photoUrl : {
          type : String,
+         validate(value){
+            if(!validator.isURL(value)){
+                 throw new Error("Wrong URL:" + value);
+            }
+         },
        },
 
     //    by default it's always push with any data
