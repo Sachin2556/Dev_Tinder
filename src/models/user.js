@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator")  //read validator from documents (search validator library)
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const userSchema = mongoose.Schema({
 
@@ -88,7 +89,7 @@ const userSchema = mongoose.Schema({
 userSchema.methods.getJWT = async function () {
    const user = this;
 
-   const token =jwt.sign({ _id: user._id } , "DEV@TINDER2556",{
+   const token = await jwt.sign({ _id: user._id } , "DEV@TINDER2556",{
       expiresIn: "1d",  //token expire in one day
    });  //by login userid generate automatic token
 
@@ -99,7 +100,7 @@ userSchema.methods.validatePassword= async function (passwordInputByUser) {
    const user = this;
   const passwordHash= user.password;
 
-   const isPasswordValid = bcrypt.compare(passwordInputByUser, passwordHash);
+   const isPasswordValid = await bcrypt.compare(passwordInputByUser, passwordHash);
 
    return isPasswordValid;
 };

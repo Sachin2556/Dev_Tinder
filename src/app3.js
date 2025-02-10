@@ -70,14 +70,11 @@ app.post("/login", async(req,res) =>{
             throw new Error("Invalid Credentials");
          }
 
-         const isPasswordValid = await bcrypt.compare(password, user.password);
+         const isPasswordValid = await user.validatePassword(password);
          if(isPasswordValid){
 
             // Create JWT token                               // secret key
-             const token = await jwt.sign({ _id: user._id } , "DEV@TINDER2556",{
-                   expiresIn: "1d",  //token expire in one day
-                });  //by login userid generate automatic token
-             ;
+             const token = await user.getJWT();
             // Add the token to cookie and send the response back to the user
             res.cookie("token", token , {
                 expires : new Date(Date.now() + 8*3600000),  //cookies expires in 8 days
@@ -85,7 +82,7 @@ app.post("/login", async(req,res) =>{
             res.send("Login Successfully");
          }
          else{
-            throw new Error("Invalid Credentials");
+            throw new Error("Invalid Credentials"); 
          }
     }
     catch(err){
@@ -96,8 +93,8 @@ app.post("/login", async(req,res) =>{
 // get profile
 app.get("/profile",userAuth, async(req,res) =>{
    try{
-       const user = req.user;  //from userAuth , we get user alreadyyy8o
-      console.log(user);
+       const user = req.user;  //from userAuth , we get user alreadyyy
+    //   console.log(user);
        res.send(user);
    }
    catch(err){
