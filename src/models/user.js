@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator")  //read validator from documents (search validator library)
+const bcrypt = require("bcrypt");
 
 const userSchema = mongoose.Schema({
 
@@ -8,6 +9,7 @@ const userSchema = mongoose.Schema({
            required:true,
            minLength : 4,
            maxLength : 50,
+           unique : true,
        },
 
        lastname: {
@@ -21,7 +23,8 @@ const userSchema = mongoose.Schema({
        emailId:{
         type:String,
         required : true,
-        unique : true,
+        index: true,
+        unique: true,
         lowercase : true, // automatic all keywords insert in lowercase in emaild in database
         trim : true,       // trim blank spaces("    rajsachin805130@gmail.com     ")
         validate(value){
@@ -33,6 +36,7 @@ const userSchema = mongoose.Schema({
 
        password: {
           type: String,
+         //  unique : true,
           validate(value){
             if(!validator.isStrongPassword(value)){
                  throw new Error("Enter a Strong Password :" + value);
@@ -80,5 +84,24 @@ const userSchema = mongoose.Schema({
    
 
 );
+
+userSchema.methods.getJWT = async function () {
+   const user = this;
+
+   const token =jwt.sign({ _id: user._id } , "DEV@TINDER2556",{
+      expiresIn: "1d",  //token expire in one day
+   });  //by login userid generate automatic token
+
+   return token;
+};
+
+userSchema.methods.validatePassword= async function (passwordInputByUser) {
+   const user = this;
+  const passwordHash= user.password;
+
+   const isPasswordValid = bcrypt.compare(passwordInputByUser, passwordHash);
+
+   return isPasswordValid;
+};
 
 module.exports = mongoose.model("User",userSchema);
