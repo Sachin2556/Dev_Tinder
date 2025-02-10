@@ -2,7 +2,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
-const UserAuth = async (req,res,next) => {
+const userAuth = async (req,res,next) => {
      try{
         const { token } = req.cookies;
 
@@ -10,9 +10,12 @@ const UserAuth = async (req,res,next) => {
          throw new Error("Token is not valid!!!");
         }
 
-        const decodedObj = await jwt.verify(token, "DEVTINDER@2556");
-
+        const decodedObj = await jwt.verify(token, "DEV@TINDER2556");
+        
         const { _id } = decodedObj;
+      //   console.log(_id);
+        const user = await User.findById(_id);
+
         if(!user){
          throw new Error("User not found");
         }
@@ -50,5 +53,5 @@ const UserAuth = async (req,res,next) => {
 // }
 
 module.exports = {
-    UserAuth,
+    userAuth,
 };

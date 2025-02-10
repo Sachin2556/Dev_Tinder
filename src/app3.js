@@ -70,11 +70,14 @@ app.post("/login", async(req,res) =>{
             throw new Error("Invalid Credentials");
          }
 
-         const isPasswordValid = await validatePassword(password);
+         const isPasswordValid = await bcrypt.compare(password, user.password);
          if(isPasswordValid){
 
             // Create JWT token                               // secret key
-             const token = await user.getJWT();
+             const token = await jwt.sign({ _id: user._id } , "DEV@TINDER2556",{
+                   expiresIn: "1d",  //token expire in one day
+                });  //by login userid generate automatic token
+             ;
             // Add the token to cookie and send the response back to the user
             res.cookie("token", token , {
                 expires : new Date(Date.now() + 8*3600000),  //cookies expires in 8 days
@@ -94,11 +97,11 @@ app.post("/login", async(req,res) =>{
 app.get("/profile",userAuth, async(req,res) =>{
    try{
        const user = req.user;  //from userAuth , we get user alreadyyy8o
-
+      console.log(user);
        res.send(user);
    }
    catch(err){
-    res.status(400).send("ERROR : " + err.message);
+    res.status(401).send("ERROR : " + err.message);
    }
 })
 
@@ -117,11 +120,8 @@ app.get("/receiveConnectionRequest", userAuth , async(req,res) => {
    //  receiving a connection request
    console.log("Receiving a connection request");
 
-   res.send("Receiving the connection request from" + user.firstname); 
+   res.send("Receiving the connection request from " + user.firstname); 
 });
-
-
-
 
 
 //  Get user by email
