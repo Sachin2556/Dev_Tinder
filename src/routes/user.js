@@ -46,6 +46,7 @@ userRouter.get("/user/connections", userAuth , async(req,res) =>{
            .populate("fromUserId" , USER_SAFE_DATA)
            .populate("toUserId" , USER_SAFE_DATA);
 
+           
         const data = connectionRequest.map((row) => {
             if(row.fromUserId._id.toString() === loggedInUser._id.toString()){
                 return  row.toUserId;
@@ -61,6 +62,56 @@ userRouter.get("/user/connections", userAuth , async(req,res) =>{
 })
 
 
+userRouter.get("/feed" , userAuth , async(req,res) => {
+    try{
+        /*User should see all the user cards expect:
+           0.  his own card
+           1. his connections 
+           2. ignored people
+           3. already sent the connection request
+        */
 
+           const loggedInUser= req.user;
+
+        //    pagination
+          const page = parseInt(req.query.page) || 1;
+          let limit = parseInt(req.query.limit) || 10;
+
+          limit = limit > 50 ? 50 : limit;
+          
+          const skip = (page-1) * limit;
+        //    find all connection requests(setn+received)
+        const connectionRequest = await ConnectionRequest.find({
+            $or: [{ fromUserId : loggedInUser._id} , { toUserId: loggedInUser._id}],
+        })
+          .select("fromUserId  toUserId status")
+        
+        //   all four conditions userid comes in set
+          const hideUsersFromFeed = new Set();
+          connectionRequest.forEach((req) => {
+             hideUsersFromFeed.add(req.fromUserId.toString());
+             hideUsersFromFeed.add(req.toUserId.toString());
+          })
+
+            // console.log(hideUsersFromFeed);
+
+        const users = await User.find({
+            $and:[
+               { _id: { $nin: Array.from(hideUsersFromFeed)} },
+               { _id: { $ne: loggedInUser._id}},  //dont need of this because fromuserid is also present in set
+            ],
+            
+        })
+           .select(USER_SAFE_DATA)
+           .skip(skip)
+           .limit(limit);
+
+        // res.send(users);
+        res.json({ data: users});
+    }
+    catch(err){
+         res.status(404).json({message: err.message});
+    }
+})
 
 module.exports = userRouter;
