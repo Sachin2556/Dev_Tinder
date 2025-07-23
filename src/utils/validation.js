@@ -2,6 +2,7 @@
 const validator = require("validator");
 
 const validateSignupData = (req) =>{
+        // console.log(req);
     const { firstname, lastname, emailId, password} =req.body;
 
     if(!firstname || !lastname){
@@ -23,15 +24,15 @@ const validateEditProfileData  = (req) =>{
         "lastname",
         "emailId",
         "age",
-        "photoUrl" ,
+        "photoUrl",
         "about",
         "gender",
-        "skills",
+        "skills"
     ];
 
-     const isEditAllowed = Object.keys(req.body).every((field) => {
+     const isEditAllowed = Object.keys(req.body).every((field) => 
         AllowedUpdates.includes(field)
-     });
+     );
 
     //  if(!isEditAllowed){
     //     throw new Error("Update not allowed");
@@ -41,7 +42,7 @@ const validateEditProfileData  = (req) =>{
     //     throw new Error("Skills cannot be more than 10");
     //  }
 
-     return isEditAllowed;
+   return isEditAllowed;
 };
 
 

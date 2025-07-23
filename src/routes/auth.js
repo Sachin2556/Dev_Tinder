@@ -16,7 +16,7 @@ authRouter.post("/signup",async (req,res) =>{
           // Validation of datya
            validateSignupData(req);
          
-           const { firstname , lastname , emailId , password , gender, age, skills } = req.body;
+           const { firstname , lastname , emailId , password , gender, age, skills ,photoUrl} = req.body;
          //   Encrypt the Password
          // salt mix with my password and make it strong (10 means it mix salt and password in 10 rounds )
          const passwordHash = await bcrypt.hash(password, 10);
@@ -27,13 +27,22 @@ authRouter.post("/signup",async (req,res) =>{
              lastname,
              emailId,
              password : passwordHash,
-             gender,
-             age,
-             skills,
           });
  
-     await user.save();
-     res.send("User Added successfully");
+
+     const savedUser = await user.save();
+    //   After signup new user , then it automatic login in devTinder and create a cookie
+    res.json({message : "User Added successfully", data:savedUser});
+    // Create JWT token                               // secret key
+    const token = await savedUser.getJWT();
+    // Add the token to cookie and send the response back to the user
+    res.cookie("token", token , {
+        expires : new Date(Date.now() + 8*3600000),  //cookies expires in 8 days
+    });//just explore cookies.parser
+   
+    res.json({ message: "User Added successfully", data: savedUser});
+    
+
     }
     catch(err){
        res.status(400).send("ERROR : " + err.message);

@@ -16,7 +16,7 @@ userRouter.get("/user/requests/received", userAuth , async(req,res) =>{
        const connectionRequest = await ConnectionRequest.find({
            toUserId : loggedInUser._id,
             status : "interested",       // only interseted profile we get
-       }).populate("fromUserId", "firstname lastname gender")    
+       }).populate("fromUserId", "firstname lastname gender about age photoUrl")    
     //    }).populate("fromUserId" , ["firstname", "lastname"]);
 
 //  populate is much popular because by the help of ref(which is used to join two schema),
