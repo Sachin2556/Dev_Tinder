@@ -66,6 +66,7 @@ const userSchema = mongoose.Schema({
 
        photoUrl : {
          type : String,
+         default: "https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg", 
          validate(value){
             if(!validator.isURL(value)){
                  throw new Error("Wrong URL:" + value);
@@ -101,7 +102,7 @@ userSchema.methods.getJWT = async function () {
    return token;
 };
 
-userSchema.methods.validatePassword= async function (passwordInputByUser) {
+userSchema.methods.validatePassword = async function (passwordInputByUser) {
    const user = this;
   const passwordHash= user.password;
 

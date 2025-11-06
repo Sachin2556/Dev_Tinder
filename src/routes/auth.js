@@ -31,8 +31,8 @@ authRouter.post("/signup",async (req,res) =>{
  
 
      const savedUser = await user.save();
-    //   After signup new user , then it automatic login in devTinder and create a cookie
-    res.json({message : "User Added successfully", data:savedUser});
+    
+   
     // Create JWT token                               // secret key
     const token = await savedUser.getJWT();
     // Add the token to cookie and send the response back to the user
@@ -40,6 +40,7 @@ authRouter.post("/signup",async (req,res) =>{
         expires : new Date(Date.now() + 8*3600000),  //cookies expires in 8 days
     });//just explore cookies.parser
    
+    //   After signup new user , then it automatic login in devTinder and create a cookie
     res.json({ message: "User Added successfully", data: savedUser});
     
 

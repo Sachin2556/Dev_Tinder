@@ -162,7 +162,7 @@ app.delete("/user", async(req,res) => {
    
     try{
         const users =await User.findByIdAndDelete(userId);
-       
+    //    const users =await User.findByIdAndDelete({_id : userId});
             res.send("User deleted successfully");
         
     }
